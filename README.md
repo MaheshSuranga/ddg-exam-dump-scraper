@@ -35,6 +35,8 @@ As a senior architectural decision, this scraper relies on a multi-layered evasi
    ```
 
 ## Usage
+
+### Command Line Interface (CLI)
 Run the script using Python:
 ```bash
 python scrape_exam.py
@@ -45,6 +47,26 @@ Enter your exam code (e.g., AZ-400): AZ-400
 ```
 The script will launch a visible Chromium browser (helpful for solving any unexpected CAPTCHAs) and begin scraping.
 
+### Graphical User Interface (GUI)
+You can also run the application using the included GUI:
+```bash
+python gui_app.py
+```
+The GUI provides a pleasant interface to select your exam code (e.g., AZ-900, AZ-204, AZ-400), choose a custom output directory, and start or stop the scraping process. Real-time logs are displayed directly in the application window.
+
+### Standalone Executable (.exe)
+For users who do not wish to use the command line, a standalone executable (`ExamTopics_Scraper.exe`) is available in the `dist/` directory.
+
+Simply double-click **`ExamTopics_Scraper.exe`** to launch the GUI. 
+* **Note:** Because the scraper hooks into your system's existing browser, **Google Chrome must be installed on the system** to run the executable successfully. No other dependencies or Python installations are required!
+
+## Building the Executable
+To package the application into a standalone `.exe` yourself using PyInstaller, run the following commands. The `--collect-data` flag is critical to ensure `playwright-stealth`'s internal JavaScript files are packaged correctly:
+```bash
+pip install pyinstaller
+pyinstaller --noconsole --onefile --collect-data "playwright_stealth" -y -n "ExamTopics_Scraper" gui_app.py
+```
+The newly compiled executable will be located in the `dist/` folder.
 ## Output Structure
 The scraper automatically organizes screenshots by Topic inside the `output` directory:
 ```

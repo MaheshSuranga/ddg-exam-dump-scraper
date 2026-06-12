@@ -16,3 +16,8 @@ page_source.html
 # IDEs
 .vscode/
 .idea/
+
+# PyInstaller
+build/
+dist/
+*.spec
