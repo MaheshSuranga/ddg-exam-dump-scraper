@@ -55,16 +55,22 @@ python gui_app.py
 The GUI provides a pleasant interface to select your exam code (e.g., AZ-900, AZ-204, AZ-400), choose a custom output directory, and start or stop the scraping process. Real-time logs are displayed directly in the application window.
 
 ### Standalone Executable (.exe)
-For users who do not wish to use the command line, a standalone executable (`ExamTopics_Scraper.exe`) is available in the `dist/` directory.
+For users who do not wish to use the command line or have Python installed, a standalone executable (`ExamTopics_Scraper.exe`) is available in the `dist/` directory.
 
 Simply double-click **`ExamTopics_Scraper.exe`** to launch the GUI. 
-* **Note:** Because the scraper hooks into your system's existing browser, **Google Chrome must be installed on the system** to run the executable successfully. No other dependencies or Python installations are required!
+* **Zero Dependency Setup**: Python or library installations are **not required**.
+* **Smart Browser Fallback**: The scraper automatically detects your installed browsers at runtime:
+  1. It attempts to launch **Google Chrome** first (which offers the best evasion against CAPTCHAs).
+  2. If Chrome is not found, it automatically falls back to **Microsoft Edge** (pre-installed on all Windows 10 & 11 PCs).
+  3. If Edge is also missing, it will attempt to launch default **Playwright Chromium**.
+  This design ensures the application runs out-of-the-box on virtually any Windows computer.
 
 ## Building the Executable
-To package the application into a standalone `.exe` yourself using PyInstaller, run the following commands. The `--collect-data` flag is critical to ensure `playwright-stealth`'s internal JavaScript files are packaged correctly:
+To package the application into a standalone `.exe` yourself, make sure PyInstaller is installed and build it using the provided `.spec` configuration file (which handles the collection of Playwright driver binaries and Stealth package assets automatically):
+
 ```bash
 pip install pyinstaller
-pyinstaller --noconsole --onefile --collect-data "playwright_stealth" -y -n "ExamTopics_Scraper" gui_app.py
+python -m PyInstaller ExamTopics_Scraper.spec --clean --noconfirm
 ```
 The newly compiled executable will be located in the `dist/` folder.
 ## Output Structure

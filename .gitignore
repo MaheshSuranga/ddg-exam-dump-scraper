@@ -21,3 +21,7 @@ page_source.html
 build/
 dist/
 *.spec
+
+# Archives and Logs
+*.zip
+*.log

@@ -13,11 +13,26 @@ async def main(exam_name):
         os.makedirs(OUTPUT_DIR)
 
     async with async_playwright() as p:
-        # Launch with a realistic user-agent and standard bot-evasion practices
-        # headless=False can sometimes help avoid instant bot detection by Google, 
-        # Using channel="chrome" uses your system's actual Google Chrome installation, 
-        # which easily bypasses Cloudflare Turnstile and Google CAPTCHAs.
-        browser = await p.chromium.launch(headless=False, channel="chrome", args=["--disable-blink-features=AutomationControlled"])
+        # Try Google Chrome first. Fall back to Microsoft Edge if Chrome is missing.
+        # Edge is pre-installed on all Windows systems, making it highly reliable.
+        try:
+            print("Launching browser using Google Chrome...")
+            browser = await p.chromium.launch(headless=False, channel="chrome", args=["--disable-blink-features=AutomationControlled"])
+        except Exception as e:
+            print(f"Google Chrome failed to launch or is not installed: {e}")
+            print("Attempting fallback to Microsoft Edge...")
+            try:
+                browser = await p.chromium.launch(headless=False, channel="msedge", args=["--disable-blink-features=AutomationControlled"])
+            except Exception as e2:
+                print(f"Microsoft Edge failed to launch or is not installed: {e2}")
+                print("Attempting fallback to default Playwright Chromium...")
+                try:
+                    browser = await p.chromium.launch(headless=False, args=["--disable-blink-features=AutomationControlled"])
+                except Exception as e3:
+                    raise Exception(
+                        "Failed to launch any browser. Please install Google Chrome or Microsoft Edge, "
+                        "or run 'playwright install chromium' to setup default browser."
+                    ) from e3
         
         user_agents = [
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
